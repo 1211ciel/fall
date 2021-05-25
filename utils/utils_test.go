@@ -5,13 +5,16 @@ import (
 	"fmt"
 	"github.com/1211ciel/fall/utils/cache"
 	"github.com/1211ciel/fall/utils/db"
+	"github.com/1211ciel/fall/utils/log"
 	"github.com/logrusorgru/aurora"
+	"github.com/rfyiamcool/go-timewheel"
+	"github.com/tal-tech/go-zero/core/collection"
 	"github.com/tal-tech/go-zero/core/fx"
 	"github.com/tal-tech/go-zero/core/logx"
 	"github.com/tal-tech/go-zero/core/mr"
 	"github.com/tal-tech/go-zero/core/stores/redis"
+	"github.com/tal-tech/go-zero/core/stringx"
 	"github.com/tal-tech/go-zero/tools/goctl/util/console"
-	"github.com/tal-tech/go-zero/tools/goctl/util/stringx"
 	"gorm.io/gorm"
 	"strings"
 	"testing"
@@ -29,7 +32,6 @@ func TestColor(t *testing.T) {
 	c.MarkDone()
 }
 func TestString(t *testing.T) {
-	fmt.Println(stringx.From("hello").ToCamel())
 }
 
 type User struct {
@@ -40,7 +42,77 @@ type User struct {
 func (receiver User) TableName() string {
 	return "aoo"
 }
-// 
+func TestTimeWheel2(t *testing.T) {
+	tw, err := collection.NewTimingWheel(time.Second, 3, func(key, value interface{}) {
+		fmt.Println("ok", key, time.Now())
+	})
+	tw.
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	key := "t"
+	tw.SetTimer(key, "", time.Second)
+	select {}
+}
+func TestTimeWheel(t *testing.T) {
+	count := 0
+	timewheel.AddCron(time.Second, func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.C.Info("ok")
+				return
+			}
+		}()
+		count++
+		fmt.Println(time.Now())
+		if count > 3 {
+			panic("kill")
+		}
+	})
+	select {}
+}
+
+// 进程内缓存使用
+func TestCache(t *testing.T) {
+	c, err := collection.NewCache(time.Minute, collection.WithLimit(10000))
+	if err != nil {
+		panic(err)
+	}
+	take, err := c.Take("key", func() (interface{}, error) {
+		return User{Name: "ciel", Age: 18}, nil
+	})
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	fmt.Println(take)
+	c.Del("key")
+
+}
+
+// 查找敏感词
+func TestStringX(t *testing.T) {
+	filter := stringx.NewTrie([]string{
+		"苍井空",
+		"AV",
+	})
+	keywords := filter.FindKeywords("日本AV演员兼电视、电影演员。苍井空AV女优是xx出道, 日本AV女优们最精彩的表演是AV演员色情表演")
+	fmt.Println(keywords)
+}
+
+// 敏感词过滤
+func TestStringX2(t *testing.T) {
+	filter := stringx.NewTrie([]string{
+		"AV演员",
+		"苍井空",
+		"AV",
+		"日本AV女优",
+		"AV演员色情",
+	}, stringx.WithMask('?')) // 默认替换为*
+	safe, keywords, found := filter.Filter("日本AV演员兼电视、电影演员。苍井空AV女优是xx出道, 日本AV女优们最精彩的表演是AV演员色情表演")
+	fmt.Println(safe)
+	fmt.Println(keywords)
+	fmt.Println(found)
+}
 func TestMapReduce(t *testing.T) {
 	uids := []int64{1, 2, 3, 4, 5, 6, 7, 8}
 	r, err := mr.MapReduce(func(source chan<- interface{}) {
