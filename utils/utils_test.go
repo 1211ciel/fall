@@ -3,34 +3,22 @@ package utils
 import (
 	"errors"
 	"fmt"
-	"github.com/1211ciel/fall/utils/cache"
-	"github.com/1211ciel/fall/utils/db"
-	"github.com/1211ciel/fall/utils/log"
-	"github.com/logrusorgru/aurora"
-	"github.com/rfyiamcool/go-timewheel"
+	"github.com/1211ciel/fall/utils/dbutil"
+	"github.com/tal-tech/go-zero/core/bloom"
 	"github.com/tal-tech/go-zero/core/collection"
 	"github.com/tal-tech/go-zero/core/fx"
-	"github.com/tal-tech/go-zero/core/logx"
 	"github.com/tal-tech/go-zero/core/mr"
 	"github.com/tal-tech/go-zero/core/stores/redis"
 	"github.com/tal-tech/go-zero/core/stringx"
-	"github.com/tal-tech/go-zero/tools/goctl/util/console"
 	"gorm.io/gorm"
 	"strings"
 	"testing"
 	"time"
 )
 
-func TestColor(t *testing.T) {
-	c := console.NewConsole(true)
-	c.Success("ok")
-	c.Info("info")
-	c.Debug("debug")
-	c.Error("err")
-	c.Warning("warning")
-	fmt.Println(aurora.BgMagenta("okk"))
-	c.MarkDone()
+func TestInput(t *testing.T) {
 }
+
 func TestString(t *testing.T) {
 }
 
@@ -42,33 +30,43 @@ type User struct {
 func (receiver User) TableName() string {
 	return "aoo"
 }
+
+var (
+	tw    *collection.TimingWheel
+	count = 0
+	key   = "t1"
+)
+
+func TestBloom(t *testing.T) {
+	store := redis.NewRedis("localhost:6379", redis.NodeType, "")
+	bitSet := bloom.New(store, "test_key", 2)
+	key = "dd"
+	_ = bitSet.Add([]byte(key))
+	_ = bitSet.Add([]byte("ok"))
+	_ = bitSet.Add([]byte("ok3"))
+	_ = bitSet.Add([]byte("ok5"))
+	_ = bitSet.Add([]byte("ok6"))
+	exists, _ := bitSet.Exists([]byte(key))
+	fmt.Println(exists)
+
+}
+
+// 定时任务
 func TestTimeWheel2(t *testing.T) {
-	tw, err := collection.NewTimingWheel(time.Second, 3, func(key, value interface{}) {
-		fmt.Println("ok", key, time.Now())
+	timingWheel, err := collection.NewTimingWheel(time.Second, 10, func(key, value interface{}) {
+		count++
+		fmt.Println(count, " ", time.Now())
+		tw.SetTimer(key, "", time.Second*3)
+		if count > 5 {
+			tw.RemoveTimer(key) //
+			tw.SetTimer(key, "", time.Second*1)
+		}
 	})
-	tw.
 	if err != nil {
 		t.Fatal(err.Error())
 	}
-	key := "t"
-	tw.SetTimer(key, "", time.Second)
-	select {}
-}
-func TestTimeWheel(t *testing.T) {
-	count := 0
-	timewheel.AddCron(time.Second, func() {
-		defer func() {
-			if r := recover(); r != nil {
-				log.C.Info("ok")
-				return
-			}
-		}()
-		count++
-		fmt.Println(time.Now())
-		if count > 3 {
-			panic("kill")
-		}
-	})
+	tw = timingWheel
+	tw.SetTimer(key, "", time.Second*1)
 	select {}
 }
 
@@ -172,30 +170,6 @@ func GetValue(v interface{}, query func(v interface{}) error) error {
 	// 从缓存获取,如果没有从 query 方法查询获取
 	return query(v)
 }
-func TestTake(t *testing.T) {
-	r := redis.NewRedis("localhost:6379", redis.NodeType, "")
-	for i := 0; i < 10; i++ {
-		i := i
-		go func() {
-			var a User
-			if err := cache.Take(r, "ciel", &a, func(v interface{}) error {
-				fmt.Println(i, " query")
-				var b User
-				if err := getDB().Model(&User{}).Where("name = 'ciel'").First(&b).Error; err != nil {
-					logx.Error(err.Error())
-					return err
-				}
-				// 将查询到的值绑定给 v
-				*v.(*User) = b
-				return nil
-			}, time.Second*60); err != nil {
-				logx.Error(err.Error())
-			}
-			fmt.Println(i, a)
-		}()
-	}
-	select {}
-}
 
 // 流数据 相加
 func TestFxSum(t *testing.T) {
@@ -270,5 +244,5 @@ func TestDB(t *testing.T) {
 	fmt.Println(a)
 }
 func getDB() *gorm.DB {
-	return db.GetDefaultMysql("root:123456@tcp(localhost:3306)/sky?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai", true)
+	return dbutil.GetDefaultMysql("root:123456@tcp(localhost:3306)/sky?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai", true)
 }

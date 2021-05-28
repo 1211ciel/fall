@@ -1,4 +1,4 @@
-package db
+package dbutil
 
 import (
 	"gorm.io/driver/mysql"
