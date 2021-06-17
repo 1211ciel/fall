@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+package comet;
+import "logic/logic.proto";
+option go_package = "cometpb/";
+
+service cometCli {
+  rpc PushMsg(PushReq)returns(CometEmpty);
+}
+
+message PushReq{
+  logic.PushMsg msg = 1;
+}
+message CometEmpty{}
