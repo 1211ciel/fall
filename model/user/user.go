@@ -10,3 +10,6 @@ type UsUser struct {
 	Phone string `gorm:"column:phone;type:varchar(64) not null;default:;comment:手机号;index"`
 }
 
+func (u *UsUser) TableName() string {
+	return "us_user"
+}
