@@ -10,15 +10,15 @@ import (
 
 func NewRedis(c *conf.Redis) *redis.Pool {
 	return &redis.Pool{
-		MaxIdle:     c.Idle,
 		MaxActive:   c.Active,
+		MaxIdle:     c.Idle,
 		IdleTimeout: time.Second * time.Duration(c.IdleTimeout),
 		Dial: func() (redis.Conn, error) {
-			conn, err := redis.Dial(c.Network, c.Addr,
+			conn, err := redis.Dial("tcp", c.Addr,
 				redis.DialConnectTimeout(time.Millisecond*time.Duration(c.DialTimeout)),
 				redis.DialReadTimeout(time.Millisecond*time.Duration(c.ReadTimeout)),
 				redis.DialWriteTimeout(time.Millisecond*time.Duration(c.WriteTimeout)),
-				redis.DialPassword(c.Auth),
+				redis.DialPassword(c.Pwd),
 			)
 			if err != nil {
 				return nil, err
@@ -26,6 +26,19 @@ func NewRedis(c *conf.Redis) *redis.Pool {
 			return conn, nil
 		},
 	}
+}
+func NewDefaultRedis(addr string) *redis.Pool {
+	return NewRedis(&conf.Redis{
+		Addr:         addr,
+		Active:       60000,
+		Idle:         1024,
+		DialTimeout:  200,
+		WriteTimeout: 500,
+		ReadTimeout:  500,
+		IdleTimeout:  120,
+		Expire:       30,
+	})
+
 }
 
 // ListenSubChannels 订阅redis监听

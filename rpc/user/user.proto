@@ -1,0 +1,12 @@
+syntax = "proto3";
+
+package user;
+service usercli{
+  rpc register(RegisterUserReq)returns(LoginRes);
+}
+message RegisterUserReq{
+
+}
+message LoginRes{
+
+}

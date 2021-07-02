@@ -1,9 +1,9 @@
 package conf
 
-type NqsCli struct {
-	Addresses []string
+type NsqCli struct {
+	Addresses []string // localhost:4150
 }
 
 type NsqServer struct {
-	Addr string
+	Addr string // localhost:4150
 }

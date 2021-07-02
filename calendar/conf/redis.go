@@ -1,14 +1,13 @@
 package conf
 
 type Redis struct {
-	Network      string
-	Addr         string
-	Auth         string
-	Active       int
-	Idle         int
-	DialTimeout  int
-	ReadTimeout  int
-	WriteTimeout int
-	IdleTimeout  int
-	Expire       int
+	Addr         string // 127.0.0.1:6379
+	Pwd          string
+	Active       int // unit ?
+	Idle         int // unit ?
+	DialTimeout  int // unit millisecond
+	ReadTimeout  int // unit millisecond
+	WriteTimeout int // unit millisecond
+	IdleTimeout  int // unit second
+	Expire       int // unit minute
 }
