@@ -6,7 +6,6 @@ import (
 	"github.com/gomodule/redigo/redis"
 	"github.com/tal-tech/go-zero/core/logx"
 	"github.com/tal-tech/go-zero/core/syncx"
-	"gorm.io/gorm"
 	"sync"
 	"time"
 )
@@ -26,16 +25,14 @@ var errPlaceholder = errors.New("placeholder")
 type Shadow struct {
 	pool        *redis.Pool
 	lock        *sync.Mutex
-	db          *gorm.DB
 	errNotFound error
 }
 
-func NewShadow(pool *redis.Pool, db *gorm.DB) Shadow {
+func NewShadow(pool *redis.Pool) Shadow {
 	return Shadow{
 		pool:        pool,
 		lock:        new(sync.Mutex),
 		errNotFound: errPlaceholder,
-		db:          db,
 	}
 }
 

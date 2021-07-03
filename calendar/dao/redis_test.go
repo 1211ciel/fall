@@ -55,3 +55,40 @@ func TestRedis202172(t *testing.T) {
 	c.Do("EXEC")
 	//c.Flush()  do 和 flush 都可以使用
 }
+func TestRedis1(t *testing.T) {
+	c := NewDefaultRedis(":6379").Get()
+	// 基本
+	// c
+	//c.Do("set", "hello", "123")
+	// u
+	//c.Do("set", "hello", "1234")
+	// r
+	//content, err := redis.String(c.Do("get", "hello"))
+	//if err != nil {
+	//	t.Fatal(err.Error())
+	//}
+	//fmt.Printf(content)
+	// d
+	//c.Do("del", "hello")
+	// 哈希表
+	// c u
+	//s, err := redis.Int(c.Do("hset", "website", "google", "www.g.cn"))
+	//if err != nil {
+	//	t.Fatal(err.Error())
+	//}
+	//fmt.Println(s)
+	// r
+	//s, err2 := redis.String(c.Do("hget", "website", "google"))
+	//if err2 != nil {
+	//	t.Fatal(err2.Error())
+	//}
+	//fmt.Println(s)
+
+	// r all
+	//stringMap, err := redis.StringMap(c.Do("hgetall", "website"))
+	//if err != nil {
+	//	t.Fatal(err.Error())
+	//}
+	//fmt.Println(stringMap)
+	c.Do("hdel", "website", "google")
+}

@@ -1,6 +1,7 @@
 package dao
 
 import (
+	"fmt"
 	"github.com/1211ciel/fall/calendar/conf"
 	"github.com/nsqio/go-nsq"
 	"log"
@@ -79,6 +80,30 @@ func (h handleNSQSub21722) HandleMessage(message *nsq.Message) error {
 func TestNSQSub21722(t *testing.T) {
 	go func() {
 		NewNSQSub(&conf.NsqCli{Addresses: []string{"localhost:4150"}}, "ciel", "first", handleNSQSub21722{})
+	}()
+	select {}
+}
+
+func TestNSQPub3(t *testing.T) {
+	pub := NewNsqPub(&conf.NsqServer{Addr: "localhost:4150"})
+	err := pub.Publish("ciel", []byte("hello 7 3"))
+	if err != nil {
+		t.Fatal(err)
+	}
+}
+
+type nsqSubHandler struct {
+}
+
+func (n nsqSubHandler) HandleMessage(m *nsq.Message) error {
+	m.Finish()
+	fmt.Println(string(m.Body))
+	return nil
+}
+
+func TestNSQSub3(t *testing.T) {
+	go func() {
+		NewNSQSub(&conf.NsqCli{Addresses: []string{"localhost:4150"}}, "ciel", "1", nsqSubHandler{})
 	}()
 	select {}
 }

@@ -72,3 +72,28 @@ func TestDBD202172(t *testing.T) {
 	db2021_7_2().Model(&model.User{}).Where("id = 1").Count(&num)
 	fmt.Println(num)
 }
+func db2021_7_3() *gorm.DB {
+	return NewDefaultDB("root:123456@tcp(localhost:3306)/ciel_21_7_3?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai", true)
+}
+func TestDB20210703(t *testing.T) {
+	db := db2021_7_3()
+	//db.AutoMigrate(model.User{})
+	// c
+	//db.Create(&model.User{
+	//	Pid:   0,
+	//	Uname: "ciel",
+	//	Icon:  "test.png",
+	//	Pwd:   "123",
+	//	Phone: "13223335123",
+	//})
+	// u
+	//if err := db.Model(&model.User{}).Where("id = 1").Update("icon", "test2.png").Error; err != nil {
+	//	t.Fatal(err.Error())
+	//}
+	//// r
+	//var u model.User
+	//if err := db.Model(&u).Where("id = 1").First(&u).Error; err != nil {
+	//	t.Fatal(err.Error())
+	//}
+	db.Unscoped().Delete(model.User{}, "id = 2")
+}
