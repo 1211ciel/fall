@@ -92,3 +92,38 @@ func TestRedis1(t *testing.T) {
 	//fmt.Println(stringMap)
 	c.Do("hdel", "website", "google")
 }
+
+func TestRedis74(t *testing.T) {
+	c := NewDefaultRedis(":6379").Get()
+	// c
+	//i, err := redis.String(c.Do("set", "ciel", "sunnie"))
+	//if err != nil {
+	//	t.Fatal(err.Error())
+	//}
+	// u
+	//s, err := redis.String(c.Do("set", "ciel", "goodbye"))
+	//if err != nil {
+	//	t.Fatal(err.Error())
+	//}
+	//fmt.Println(s)
+	// d
+	//s, err := redis.Int(c.Do("del", "ciel"))
+	//if err != nil {
+	//	t.Fatal(err.Error())
+	//}
+	//fmt.Println(s)
+
+	// hash map
+	//c.Do("hset", "books", "golang", 1)
+	//i, err := redis.Int(c.Do("hget", "books", "golang"))
+	//if err != nil {
+	//	t.Fatal(err.Error())
+	//}
+	//fmt.Println(i)
+	//c.Do("hset", "books", "java", "3")
+	i, err := redis.Int(c.Do("hdel", "books", "golang"))
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+	fmt.Println(i)
+}

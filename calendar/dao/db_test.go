@@ -97,3 +97,21 @@ func TestDB20210703(t *testing.T) {
 	//}
 	db.Unscoped().Delete(model.User{}, "id = 2")
 }
+func TestDB202174(t *testing.T) {
+	db := NewDefaultDB("root:123456@tcp(localhost:3306)/ciel202174?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai", false)
+	//db.AutoMigrate(model.User{})
+	// create
+	//affected := db.Create(&model.User{
+	//	Pid: 0, Uname: "ciel", Icon: "test.png", Pwd: "123123", Phone: "1412131231",
+	//}).RowsAffected
+	//fmt.Println(affected)
+	// u
+	//db.Model(&model.User{}).Where("id = 1").Update("icon", "test1.png")
+	//var u model.User
+	//if err := db.Model(&u).Where("id = 1").First(&u).Error; err != nil {
+	//	t.Fatal(err.Error())
+	//}
+	//fmt.Println(&u)
+	affected := db.Model(model.User{}).Unscoped().Delete(model.User{}, "id = 1").RowsAffected
+	fmt.Println(affected)
+}

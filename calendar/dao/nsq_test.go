@@ -6,6 +6,7 @@ import (
 	"github.com/nsqio/go-nsq"
 	"log"
 	"testing"
+	"time"
 )
 
 func TestNewNsqPub(t *testing.T) {
@@ -104,6 +105,28 @@ func (n nsqSubHandler) HandleMessage(m *nsq.Message) error {
 func TestNSQSub3(t *testing.T) {
 	go func() {
 		NewNSQSub(&conf.NsqCli{Addresses: []string{"localhost:4150"}}, "ciel", "1", nsqSubHandler{})
+	}()
+	select {}
+}
+func TestNsqPub2(t *testing.T) {
+	err := NewNsqPub(&conf.NsqServer{Addr: "localhost:4150"}).Publish("ciel", []byte("hello ciel"+time.Now().Format("2006/01/02 15:04:05")))
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+}
+
+type nsqSubHandler2 struct {
+}
+
+func (n nsqSubHandler2) HandleMessage(msg *nsq.Message) error {
+	fmt.Println(string(msg.Body))
+	msg.Finish()
+	return nil
+}
+
+func TestNsqSub2(t *testing.T) {
+	go func() {
+		NewNSQSub(&conf.NsqCli{Addresses: []string{"localhost:4150"}}, "ciel", "1", nsqSubHandler2{})
 	}()
 	select {}
 }
