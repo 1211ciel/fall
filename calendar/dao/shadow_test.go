@@ -100,3 +100,21 @@ func TestCache3(t *testing.T) {
 		fmt.Println(u)
 	}
 }
+func TestS75(t *testing.T) {
+	shadow := NewShadow(NewDefaultRedis(":6379"))
+	//for i := 0; i < 10; i++ {
+	//	var u model.User
+	//	err := shadow.Take(&u, "ciel", func(v interface{}) error {
+	//		var temp model.User
+	//		NewDefaultDB("root:123456@tcp(localhost:3306)/ciel202175?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai", true).
+	//			Model(&temp).Where("id = 2").First(&temp)
+	//		*v.(*model.User) = temp
+	//		return nil
+	//	})
+	//	if err != nil {
+	//		t.Fatal(err.Error())
+	//	}
+	//	fmt.Println(u)
+	//}
+	shadow.Del("ciel")
+}

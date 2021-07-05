@@ -92,7 +92,6 @@ func TestRedis1(t *testing.T) {
 	//fmt.Println(stringMap)
 	c.Do("hdel", "website", "google")
 }
-
 func TestRedis74(t *testing.T) {
 	c := NewDefaultRedis(":6379").Get()
 	// c
@@ -126,4 +125,18 @@ func TestRedis74(t *testing.T) {
 		t.Fatal(err.Error())
 	}
 	fmt.Println(i)
+}
+func TestR75(t *testing.T) {
+	pool := NewDefaultRedis(":6379")
+	c := pool.Get()
+	// c , u
+	//c.Do("set", "r75", time.Now())
+	// r
+	//s, err := redis.String(c.Do("get", "r75"))
+	//if err != nil {
+	//	t.Fatal(err.Error())
+	//}
+	//fmt.Println(s)
+	// d
+	c.Do("del","r75")
 }

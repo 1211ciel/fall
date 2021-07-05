@@ -130,3 +130,26 @@ func TestNsqSub2(t *testing.T) {
 	}()
 	select {}
 }
+
+func TestNSQPub75(t *testing.T) {
+	err := NewNsqPub(&conf.NsqServer{Addr: ":4150"}).Publish("ciel", []byte(fmt.Sprint(time.Now())))
+	if err != nil {
+		t.Fatal(err.Error())
+	}
+}
+
+type nsqSub75 struct {
+}
+
+func (n nsqSub75) HandleMessage(m *nsq.Message) error {
+	m.Finish()
+	fmt.Println(string(m.Body))
+	return nil
+}
+
+func TestNsqSub75(t *testing.T) {
+	go func() {
+		NewNSQSub(&conf.NsqCli{Addresses: []string{":4150"}}, "ciel", "1", nsqSub75{})
+	}()
+	select {}
+}

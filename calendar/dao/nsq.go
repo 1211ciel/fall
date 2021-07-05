@@ -7,6 +7,7 @@ import (
 )
 
 /*
+nsq 默认端口 4150
 nsq windows 启动
 1. 进入bin目录 cd nsq-1.2.0/bin
 2. 启动nsqlookup ./nsqlookupd &
