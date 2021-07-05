@@ -2,6 +2,8 @@ cloud.google.com/go v0.26.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMT
 cloud.google.com/go v0.34.0/go.mod h1:aQUYkXzVsufM+DwF1aE+0xfcU+56JwCaLick0ClmMTw=
 github.com/1211ciel/shadow-im v0.0.0-20210701110050-6be7e270dcf5 h1:lx6PXKXHECRLnv1anRw6SaeP4OwAzDjIudR3VgPqJRI=
 github.com/1211ciel/shadow-im v0.0.0-20210701110050-6be7e270dcf5/go.mod h1:GaQdsacODEpo5Re4o2BIOmWTMkqGEGxpxLvQLV/WGqQ=
+github.com/1211ciel/word-of-wind v0.0.1 h1:elYwxkdpBHDem6HDVjprdmQ/g3muS2iuSdXni3TUjA8=
+github.com/1211ciel/word-of-wind v0.0.1/go.mod h1:GhmiO5dVBjXIfuxisHZyQT9pemIZj1Fk/dvmSqlsefg=
 github.com/BurntSushi/toml v0.3.1/go.mod h1:xHWCNGjB5oqiDr8zfno3MHue2Ht5sIBksp03qcyfWMU=
 github.com/ClickHouse/clickhouse-go v1.4.3/go.mod h1:EaI/sW7Azgz9UATzd5ZdZHRUhHgv5+JMS9NSr2smCJI=
 github.com/DATA-DOG/go-sqlmock v1.4.1/go.mod h1:f/Ixk793poVmq4qj/V1dPUg2JEAKC73Q5eFN3EC/SaM=
