@@ -1,0 +1,22 @@
+type Request {
+	Name string `path:"name,options=you|me"`
+}
+
+type Response {
+	Message string `json:"message"`
+}
+type RegisterReq {
+	Name string `form:"name"`
+	Pwd string `form:"pwd"`
+}
+type RegisterRes {
+	Ok bool `json:"ok"`
+}
+
+service gateway-api {
+	@handler GatewayHandler
+	get /from/:name (Request) returns (Response);
+
+	@handler RegisterHandler
+	get /register (RegisterReq) returns (RegisterRes);
+}

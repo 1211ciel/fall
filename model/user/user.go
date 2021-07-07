@@ -1,6 +1,7 @@
 package model
 
 import (
+	"errors"
 	"fmt"
 	"github.com/1211ciel/word-of-wind/calendar/consts"
 	"github.com/1211ciel/word-of-wind/calendar/dao"
@@ -22,6 +23,10 @@ func (*User) TableName() string {
 	return "us_user"
 }
 
+func NewUser(pid uint64, uname, icon, pwd, phone string) User {
+	return User{Pid: pid, Uname: uname, Icon: icon, Pwd: pwd, Phone: phone}
+}
+
 var (
 	cacheUserId = "cache#User#id#%v"
 )
@@ -32,6 +37,8 @@ type (
 		CreateUser(data *User) error
 		UpdateUser(data *User) error
 		DelUserById(id uint64) error
+		FindByUsername(uname string) (*User, error)
+		CheckUserNameExist(uname string) error
 	}
 	defaultUserModel struct {
 		dao.Shadow
@@ -39,9 +46,32 @@ type (
 	}
 )
 
+func (s *defaultUserModel) CheckUserNameExist(uname string) error {
+	var count int64
+	err := s.DB.Model(&User{}).Where("uname = ?", uname).Count(&count).Error
+	if err != nil {
+		return consts.ErrData
+	}
+	if count != 0 {
+		return consts.ErrDataAlreadyExist
+	}
+	return nil
+}
+
+func (s *defaultUserModel) FindByUsername(uname string) (*User, error) {
+	var u User
+	err := s.DB.Model(&u).Where("uname = ?", uname).First(&u).Error
+	if err != nil {
+		if err == gorm.ErrRecordNotFound {
+			return nil, errors.New("数据不存在")
+		}
+	}
+	return &u, nil
+}
+
 func NewUserModel(db *gorm.DB, r *redis.Pool) UserModel {
 	return &defaultUserModel{
-		dao.NewShadow(r),
+		dao.NewCache(r),
 		db,
 	}
 }
