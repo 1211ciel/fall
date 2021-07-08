@@ -1,0 +1,22 @@
+Name: user.rpc
+ListenOn: 127.0.0.1:8080
+Etcd:
+  Hosts:
+    - 127.0.0.1:2379
+  Key: user.rpc
+MySql:
+  Addr: "root:123456@tcp(localhost:3306)/ciel78?charset=utf8mb4&parseTime=true&loc=Asia%2FShanghai"
+  MaxIdleConnes: 10 # 最大空闲连接数
+  MaxOpenConns: 100 # 设置数据库连接的最大数量
+  MaxLifTime: 1 # 设置连接可复用的最大时间.
+  Debug: true
+MyRedis:
+  Addr: :6379
+  Pwd:
+  Active: 60000
+  Idle: 1024
+  DialTimeout: 200 # millisecond
+  ReadTimeout: 500 # millisecond
+  WriteTimeout: 500 # millisecond
+  IdleTimeout: 120 # second
+  Expire: 30 # minute
